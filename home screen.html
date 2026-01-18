@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Developer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00ff88;
+            --secondary: #ff006e;
+            --accent: #ffbe0b;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --border: #2a2a2a;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* Particles Background */
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 15px 50px;
+            background: rgba(10, 10, 10, 0.95);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            position: relative;
+            transition: color 0.3s ease;
+            padding: 5px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: var(--text);
+            margin: 3px 0;
+            transition: 0.3s;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 0 50px;
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 1;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .glitch {
+            position: relative;
+            color: var(--text);
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: bold;
+            text-transform: uppercase;
+            text-shadow: 0.05em 0 0 var(--primary), -0.025em -0.05em 0 var(--secondary),
+                         0.025em 0.05em 0 var(--accent);
+            animation: glitch 1s linear infinite;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 0.05em 0 0 var(--primary), -0.025em -0.05em 0 var(--secondary),
+                             0.025em 0.05em 0 var(--accent);
+            }
+            15% {
+                text-shadow: 0.05em 0 0 var(--secondary), -0.025em -0.05em 0 var(--accent),
+                             0.025em 0.05em 0 var(--primary);
+            }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeIn 1s ease 0.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        .typing-text {
+            border-right: 3px solid var(--primary);
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        .scroll-indicator i {
+            font-size: 30px;
+            color: var(--primary);
+        }
+
+        /* Trending AI Prompts Section */
+        .trending-prompts {
+            padding: 100px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .prompts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .prompt-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .prompt-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .prompt-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .prompt-card:hover .prompt-image {
+            transform: scale(1.1);
+        }
+
+        .prompt-content {
+            padding: 20px;
+        }
+
+        .prompt-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .prompt-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .prompt-tag {
+            padding: 5px 10px;
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid var(--primary);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--primary);
+        }
+
+        .prompt-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.9));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+        }
+
+        .prompt-card:hover .prompt-overlay {
+            opacity: 1;
+        }
+
+        .prompt-overlay-content {
+            color: var(--text);
+        }
+
+        .prompt-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Footer */
+        footer {
+            padding: 50px 30px;
+            text-align: center;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            margin-top: 100px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .social-links a {
+            color: var(--text);
+            font-size: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            nav {
+                padding: 15px 20px;
+            }
+
+            .hero {
+                padding: 0 20px;
+            }
+
+            .trending-prompts {
+                padding: 50px 20px;
+            }
+
+            .prompts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-circle {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader -->
+    <div class="loader" id="loader">
+        <div class="loader-circle"></div>
+    </div>
+
+    <!-- Particles Canvas -->
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#prompts" class="nav-link">Prompts</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="glitch">CREATIVE</h1>
+            <h1 class="glitch">DEVELOPER</h1>
+            <p class="hero-subtitle">
+                <span class="typing-text" id="typing-text"></span>
+            </p>
+        </div>
+        <div class="scroll-indicator">
+            <i class="fas fa-chevron-down"></i>
+        </div>
+    </section>
+
+    <!-- Trending AI Prompts Section -->
+    <section class="trending-prompts" id="trending-prompts">
+        <h2 class="section-title">Trending AI Prompts</h2>
+        <div class="prompts-grid">
+            <div class="prompt-card">
+                <img src="https://picsum.photos/seed/ai-portrait/400/250" alt="AI Portrait" class="prompt-image">
+                <div class="prompt-content">
+                    <p class="prompt-text">"same person, same face, same hairstyle, same identity, front view, facing the camera, photorealistic, high detail, 8k resolution"</p>
+                    <div class="prompt-tags">
+                        <span class="prompt-tag">Portrait</span>
+                        <span class="prompt-tag">Identity</span>
+                        <span class="prompt-tag">Realistic</span>
+                    </div>
+                </div>
+                <div class="prompt-overlay">
+                    <div class="prompt-overlay-content">
+                        <h3 class="prompt-title">Consistent Identity</h3>
+                        <div class="prompt-tags">
+                            <span class="prompt-tag">Stable Diffusion</span>
+                            <span class="prompt-tag">DALL-E</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prompt-card">
+                <img src="https://picsum.photos/seed/fantasy-landscape/400/250" alt="Fantasy Landscape" class="prompt-image">
+                <div class="prompt-content">
+                    <p class="prompt-text">"ethereal fantasy landscape, floating islands, magical glow, bioluminescent plants, cinematic lighting, ultra detailed, digital painting"</p>
+                    <div class="prompt-tags">
+                        <span class="prompt-tag">Fantasy</span>
+                        <span class="prompt-tag">Landscape</span>
+                        <span class="prompt-tag">Magical</span>
+                    </div>
+                </div>
+                <div class="prompt-overlay">
+                    <div class="prompt-overlay-content">
+                        <h3 class="prompt-title">Fantasy Worlds</h3>
+                        <div class="prompt-tags">
+                            <span class="prompt-tag">Midjourney</span>
+                            <span class="prompt-tag">Art</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prompt-card">
+                <img src="https://picsum.photos/seed/cyberpunk-city/400/250" alt="Cyberpunk City" class="prompt-image">
+                <div class="prompt-content">
+                    <p class="prompt-text">"cyberpunk cityscape, neon lights, rain-slicked streets, flying vehicles, dystopian future, blade runner style, atmospheric"</p>
+                    <div class="prompt-tags">
+                        <span class="prompt-tag">Cyberpunk</span>
+                        <span class="prompt-tag">City</span>
+                        <span class="prompt-tag">Neon</span>
+                    </div>
+                </div>
+                <div class="prompt-overlay">
+                    <div class="prompt-overlay-content">
+                        <h3 class="prompt-title">Future Cities</h3>
+                        <div class="prompt-tags">
+                            <span class="prompt-tag">Concept Art</span>
+                            <span class="prompt-tag">Sci-Fi</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prompt-card">
+                <img src="https://picsum.photos/seed/abstract-art/400/250" alt="Abstract Art" class="prompt-image">
+                <div class="prompt-content">
+                    <p class="prompt-text">"abstract geometric patterns, vibrant colors, flowing shapes, modern art style, digital composition, harmonious chaos"</p>
+                    <div class="prompt-tags">
+                        <span class="prompt-tag">Abstract</span>
+                        <span class="prompt-tag">Geometric</span>
+                        <span class="prompt-tag">Modern</span>
+                    </div>
+                </div>
+                <div class="prompt-overlay">
+                    <div class="prompt-overlay-content">
+                        <h3 class="prompt-title">Abstract Expression</h3>
+                        <div class="prompt-tags">
+                            <span class="prompt-tag">Generative</span>
+                            <span class="prompt-tag">Art</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prompt-card">
+                <img src="https://picsum.photos/seed/character-design/400/250" alt="Character Design" class="prompt-image">
+                <div class="prompt-content">
+                    <p class="prompt-text">"anime character design, detailed outfit, dynamic pose, expressive eyes, fantasy warrior, digital illustration, vibrant colors"</p>
+                    <div class="prompt-tags">
+                        <span class="prompt-tag">Character</span>
+                        <span class="prompt-tag">Anime</span>
+                        <span class="prompt-tag">Design</span>
+                    </div>
+                </div>
+                <div class="prompt-overlay">
+                    <div class="prompt-overlay-content">
+                        <h3 class="prompt-title">Character Creation</h3>
+                        <div class="prompt-tags">
+                            <span class="prompt-tag">Illustration</span>
+                            <span class="prompt-tag">Anime</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="prompt-card">
+                <img src="https://picsum.photos/seed/architecture/400/250" alt="Architecture" class="prompt-image">
+                <div class="prompt-content">
+                    <p class="prompt-text">"futuristic architecture, organic shapes, sustainable design, glass and steel, innovative structure, minimalist aesthetic"</p>
+                    <div class="prompt-tags">
+                        <span class="prompt-tag">Architecture</span>
+                        <span class="prompt-tag">Futuristic</span>
+                        <span class="prompt-tag">Design</span>
+                    </div>
+                </div>
+                <div class="prompt-overlay">
+                    <div class="prompt-overlay-content">
+                        <h3 class="prompt-title">Future Architecture</h3>
+                        <div class="prompt-tags">
+                            <span class="prompt-tag">3D Design</span>
+                            <span class="prompt-tag">Concept</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                I'm always excited to work on new projects and collaborate with creative minds. 
+                Feel free to reach out through any of the platforms below.
+            </p>
+            <div class="social-links">
+                <a href="#" title="GitHub"><i class="fab fa-github"></i></a>
+                <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" title="Dribbble"><i class="fab fa-dribbble"></i></a>
+                <a href="#" title="Email"><i class="fas fa-envelope"></i></a>
+            </div>
+            <p>&copy; 2024 Creative Developer. Designed with <span style="color: var(--secondary);">♥</span> and creativity.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1000);
+        });
+
+        // Particles Background
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(0, 255, 136, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            // Draw connections
+            particles.forEach((a, index) => {
+                particles.slice(index + 1).forEach(b => {
+                    const distance = Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+                    if (distance < 100) {
+                        ctx.strokeStyle = `rgba(0, 255, 136, ${0.1 * (1 - distance / 100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(a.x, a.y);
+                        ctx.lineTo(b.x, b.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Typing Effect
+        const texts = ['AI Prompt Engineer', 'Creative Designer', 'Digital Artist', 'Visual Storyteller'];
+        let textIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const pauseTime = 2000;
+
+        function typeText() {
+            const currentText = texts[textIndex];
+            const typingElement = document.getElementById('typing-text');
+
+            if (!isDeleting) {
+                typingElement.textContent = currentText.substring(0, charIndex + 1);
+                charIndex++;
+
+                if (charIndex === currentText.length) {
+                    isDeleting = true;
+                    setTimeout(typeText, pauseTime);
+                    return;
+                }
+            } else {
+                typingElement.textContent = currentText.substring(0, charIndex - 1);
+                charIndex--;
+
+                if (charIndex === 0) {
+                    isDeleting = false;
+                    textIndex = (textIndex + 1) % texts.length;
+                }
+            }
+
+            setTimeout(typeText, isDeleting ? deletingSpeed : typingSpeed);
+        }
+
+        typeText();
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Navigation Active State Indicator
+        const sections = document.querySelectorAll('section');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        function updateActiveNav() {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').slice(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveNav);
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 1s ease forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe sections
+        document.querySelectorAll('section').forEach(section => {
+            section.style.opacity = '0';
+            observer.observe(section);
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinksContainer = document.querySelector('.nav-links');
+        
+        menuToggle.addEventListener('click', () => {
+            navLinksContainer.style.display = navLinksContainer.style.display === 'flex' ? 'none' : 'flex';
+            navLinksContainer.style.position = 'absolute';
+            navLinksContainer.style.top = '100%';
+            navLinksContainer.style.left = '0';
+            navLinksContainer.style.right = '0';
+            navLinksContainer.style.flexDirection = 'column';
+            navLinksContainer.style.background = 'rgba(10, 10, 10, 0.95)';
+            navLinksContainer.style.padding = '20px';
+            navLinksContainer.style.backdropFilter = 'blur(10px)';
+        });
+
+        // Add click effect to prompt cards
+        document.querySelectorAll('.prompt-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Create ripple effect
+                const ripple = document.createElement('div');
+                ripple.style.position = 'absolute';
+                ripple.style.width = '20px';
+                ripple.style.height = '20px';
+                ripple.style.background = 'rgba(0, 255, 136, 0.5)';
+                ripple.style.borderRadius = '50%';
+                ripple.style.transform = 'translate(-50%, -50%)';
+                ripple.style.pointerEvents = 'none';
+                ripple.style.animation = 'rippleEffect 0.6s ease-out';
+                
+                const rect = this.getBoundingClientRect();
+                ripple.style.left = '50%';
+                ripple.style.top = '50%';
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes rippleEffect {
+                to {
+                    width: 400px;
+                    height: 400px;
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
